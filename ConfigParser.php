@@ -15,9 +15,11 @@ class ConfigParser
         $handle = fopen($this->filename, "r");
         if ($handle) {
             while (($line = fgets($handle)) !== false) {
+                //If it's a comment, skip line
                 if (str_starts_with($line, '# ')) continue;
 
                 $elems = explode('=', $line);
+                // If line format wrong, skip line
                 if (count($elems) != 2) continue;
 
                 $strPathElems = explode(' ', trim($elems[0]));
@@ -43,7 +45,7 @@ class ConfigParser
     private function parseValue($value): mixed
     {
         if (str_starts_with($value, "\"")) {
-            return trim($value, "\"");
+            return str_replace("­", "\0", trim($value, "\""));
         } else if (intval($value) == $value) {
             return intval($value);
         } else if (in_array($value, ['true', 'false'])) {
@@ -51,5 +53,4 @@ class ConfigParser
         }
         return $value;
     }
-
 }
